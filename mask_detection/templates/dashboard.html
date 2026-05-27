@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – Mask Detection</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;">
+        <h1 style="margin:0;">🤖 AI MASK DETECTION SYSTEM</h1>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <span id="status-badge" style="
+                background:#16a34a;color:white;padding:8px 16px;
+                border-radius:8px;font-weight:bold;font-size:0.9rem;">
+                ✅ AN TOÀN
+            </span>
+            <a href="/logout" style="background:#ef4444;color:white;padding:10px 18px;
+               border-radius:8px;text-decoration:none;font-weight:bold;">⏻ Logout</a>
+        </div>
+    </div>
+
+    <!-- CAMERA STREAM -->
+    <div class="video-box">
+        <img src="{{ url_for('video') }}" alt="Camera Feed">
+    </div>
+
+    <!-- STATS CARDS -->
+    <div class="stats">
+        <div class="card green">
+            <h2 id="stat-mask">{{ total_mask }}</h2>
+            <p>✅ MASK (frame hiện tại)</p>
+        </div>
+        <div class="card red">
+            <h2 id="stat-nomask">{{ total_nomask }}</h2>
+            <p>❌ NO MASK (frame hiện tại)</p>
+        </div>
+        <div class="card" style="background:linear-gradient(135deg,#5b21b6,#7c3aed);">
+            <h2 id="stat-violations">{{ total_violations }}</h2>
+            <p>⚠️ TỔNG VI PHẠM</p>
+        </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin:30px 0;">
+
+        <!-- Pie Chart: tỉ lệ realtime -->
+        <div class="chart-box" style="width:280px;">
+            <h3 style="color:#1e293b;margin-top:0;font-size:0.95rem;">Tỉ lệ hiện tại</h3>
+            <canvas id="pieChart"
+                    data-mask="{{ total_mask }}"
+                    data-nomask="{{ total_nomask }}">
+            </canvas>
+        </div>
+
+        <!-- Line Chart: lịch sử theo thời gian -->
+        <div class="chart-box" style="width:480px;">
+            <h3 style="color:#1e293b;margin-top:0;font-size:0.95rem;">Lịch sử phát hiện</h3>
+            <canvas id="lineChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- VIOLATION LOG TABLE -->
+    <h2>📋 Violation Logs</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Thời gian</th>
+                <th>Trạng thái</th>
+                <th>Bằng chứng</th>
+            </tr>
+        </thead>
+        <tbody id="log-body">
+            {% for log in logs|reverse %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ log.time }}</td>
+                <td style="color:#f87171;font-weight:bold;">{{ log.status }}</td>
+                <td>
+                    <a href="/static/violations/{{ log.image }}"
+                       target="_blank" rel="noopener">🖼️ Xem ảnh</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" style="color:#64748b;padding:20px;">
+                    Chưa có vi phạm nào được ghi nhận.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="download-btn" href="/download">
+        ⬇️ DOWNLOAD REPORT (CSV)
+    </a>
+
+</div>
+
+<script src="{{ url_for('static', filename='chart.js') }}"></script>
+
+</body>
+</html>

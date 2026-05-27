@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>AI Mask Detection</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>AI MASK DETECTION SYSTEM</h1>
+
+        <div class="video-box">
+
+            <img src="{{ url_for('video') }}">
+
+        </div>
+
+        <div class="buttons">
+
+            <a href="/download">
+                Download CSV Report
+            </a>
+
+        </div>
+
+        <h2>Violation Logs</h2>
+
+        <table>
+
+            <tr>
+                <th>Time</th>
+                <th>Evidence</th>
+            </tr>
+
+            {% for log in logs %}
+
+            <tr>
+
+                <td>{{ log.time }}</td>
+
+                <td>
+
+                    <a href="/static/violations/{{ log.image }}"
+                       target="_blank">
+
+                        View Image
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+</body>
+
+</html>
